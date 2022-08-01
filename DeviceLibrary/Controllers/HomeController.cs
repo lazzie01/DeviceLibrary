@@ -1,4 +1,5 @@
-﻿using DeviceLibrary.DataAccessLayer.Models;
+﻿using System;
+using DeviceLibrary.DataAccessLayer.Models;
 using DeviceLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -27,6 +28,16 @@ namespace DeviceLibrary.Controllers
            };
 
             return View(deviceViewModel);
+        }
+
+        public async Task<IActionResult> BookLaptop(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IActionResult> BookCamera(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
