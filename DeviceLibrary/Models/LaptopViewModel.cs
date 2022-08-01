@@ -22,11 +22,14 @@ namespace DeviceLibrary.Models
 
         public LaptopViewModel(Laptop laptop)
         {
-            Id = laptop.Id;
-            Name = laptop.Name;
-            Model = laptop.Model;
-            Available = laptop.Available;
-            DeviceType = laptop.DeviceType;
+            if (laptop != null)
+            {
+                Id = laptop.Id;
+                Name = laptop.Name;
+                Model = laptop.Model;
+                Available = laptop.Available;
+                DeviceType = laptop.DeviceType;
+            }
         }
 
         public Laptop ToModel(LaptopViewModel vm)

@@ -22,11 +22,14 @@ namespace DeviceLibrary.Models
 
         public CameraViewModel(Camera camera)
         {
-            Id = camera.Id;
-            Name = camera.Name;
-            Model = camera.Model;
-            Available = camera.Available;
-            DeviceType = camera.DeviceType;
+            if (camera != null)
+            {
+                Id = camera.Id;
+                Name = camera.Name;
+                Model = camera.Model;
+                Available = camera.Available;
+                DeviceType = camera.DeviceType;
+            }
         }
 
         public Camera ToModel(CameraViewModel vm)

@@ -3,6 +3,7 @@ using DeviceLibrary.DataAccessLayer.Models;
 using DeviceLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DeviceLibrary.Controllers
@@ -32,12 +33,21 @@ namespace DeviceLibrary.Controllers
 
         public async Task<IActionResult> BookLaptop(int id)
         {
-            throw new NotImplementedException();
+            var laptop = (Laptop)await _deviceRepository.Get(id,DeviceType.Laptop);
+            ViewBag.Model = new LaptopViewModel(laptop);
+            return View();
         }
 
-        public async Task<IActionResult> BookCamera(int id)
+        [HttpPost]
+        public async Task<IActionResult> BookLaptop(BookModel bm)
         {
-            throw new NotImplementedException();
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BookCamera(BookModel bm)
+        {
+            return View();
         }
     }
 }
