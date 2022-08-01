@@ -10,5 +10,7 @@ namespace DeviceLibrary.DataAccessLayer.Models
         Task<IEnumerable<IDevice>> List(DeviceType deviceType);
 
         Task<IDevice> Get(int id, DeviceType deviceType);
+
+        Task<IDevice> Book(int id, DeviceType deviceType);
     }
 }

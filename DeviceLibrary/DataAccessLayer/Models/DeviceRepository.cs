@@ -38,5 +38,26 @@ namespace DeviceLibrary.DataAccessLayer.Models
             }
             return null;
         }
+
+
+
+        public async Task<IDevice> Book(int id, DeviceType deviceType)
+        {
+            IDevice device = null;
+            if (deviceType == DeviceType.Camera)
+            {
+                device = await _appDbContext.Cameras.FirstOrDefaultAsync(x => x.Id == id);
+                device.Available = false;
+                await _appDbContext.SaveChangesAsync();
+            }
+            else if (deviceType == DeviceType.Laptop)
+            {
+                device = await _appDbContext.Laptops.FirstOrDefaultAsync(x => x.Id == id);
+                device.Available = false;
+                await _appDbContext.SaveChangesAsync();
+            }
+
+            return device;
+        }
     }
 }

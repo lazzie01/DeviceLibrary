@@ -1,35 +1,37 @@
-﻿@model DeviceLibrary.Models.DeviceViewModel
+﻿@using DeviceLibrary.DataAccessLayer.Models
+@model DeviceLibrary.Models.DeviceViewModel
 
 @{
     ViewData["Title"] = "Home Page";
 }
-
-<h4>Cameras</h4>
-<div class="container">
-    <div class="row">
-        @foreach (var camera in Model.CameraViewModel)
-        {
-            string availabilityStatus = camera.Available ? "Is Available" : "Not Available";
-        <div class="col-sm">
-            <div>@camera.Name</div>
-            <div>@camera.Model</div>
-            <div>@availabilityStatus</div>
-            <div>@camera.DeviceType</div>
-            @if (@camera.Available)
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<div id="container1">
+    <h4>Cameras</h4>
+    <div class="container">
+        <div class="row">
+            @foreach (var camera in Model.CameraViewModel)
             {
-                @Html.ActionLink("Book Now", "BookCamera", "Home", routeValues: new{ id = camera.Id}, htmlAttributes: new { @class = "btn btn-primary", @role = "button" })
+                string availabilityStatus = camera.Available ? "Is Available" : "Not Available";
+                <div class="col-sm">
+                    <div>@camera.Name</div>
+                    <div>@camera.Model</div>
+                    <div>@availabilityStatus</div>
+                    <div>@camera.DeviceType</div>
+                    @if (@camera.Available)
+                    {
+                        <button id="@camera.Id" data-device-type="@DeviceType.Camera" class="btn btn-primary">Book Camera</button>
+                    }
+                </div>
             }
         </div>
-        }
     </div>
-</div>
-<br/>
-<h4>Laptops</h4>
-<div class="container">
-    <div class="row">
-        @foreach (var laptop in Model.LaptopViewModel)
-        {
-            string availabilityStatus = laptop.Available ? "Is Available" : "Not Available";
+    <br />
+    <h4>Laptops</h4>
+    <div class="container">
+        <div class="row">
+            @foreach (var laptop in Model.LaptopViewModel)
+            {
+                string availabilityStatus = laptop.Available ? "Is Available" : "Not Available";
 
             <div class="col-sm">
                 <div>@laptop.Name</div>
@@ -38,15 +40,127 @@
                 <div>@laptop.DeviceType</div>
                 @if (@laptop.Available)
                 {
-                    @Html.ActionLink("Book Now", "BookLaptop", "Home", routeValues: new{ id = laptop.Id}, htmlAttributes: new { @class = "btn btn-primary", @role = "button" })
+            <button id="@laptop.Id" data-device-type="@DeviceType.Laptop" class="btn btn-primary">Book Laptop</button>
 
                 }
             </div>
-        }
+            }
+        </div>
     </div>
 </div>
 
-@*<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>*@
+<div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">Book Device</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="md-form mb-5">
+                        <input type="email" id="emailId" class="form-control" placeholder="Your email address">
+                        <div class="text-danger" id="emailValidationMessage"></div>
+
+                        <br />
+                        <input type="number" id="durationId" name="duration" class="form-control" placeholder="Duration (days)" min="1" max="5">
+                        <div class="text-danger" id="durationValidationMessage"></div>
+
+                        <input type="hidden" id="deviceId">
+                        <input type="hidden" id="deviceType">
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button class="btn btn-success" id="bookBtn">Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    $(function() {
+        $("#container1 button").click(function() {
+            var id = $(this).attr('id');
+            var deviceType = $(this).attr('data-device-type');
+            $.ajax({
+                type: "POST",
+                url: "/Home/Book",
+                data: {
+                    "deviceType": deviceType,
+                    "id": id
+                },
+                success: function(response) {
+                    $('#deviceId').val(response.id);
+                    $('#deviceType').val(response.deviceType);
+                    $('#modalForm').modal('show');
+                },
+                failure: function(response) {
+                    alert(response);
+                },
+                error: function(response) {
+                    alert(response);
+                }
+            });
+        });
+    });
+
+
+    $(function() {
+        $("#bookBtn").click(function() {
+            var email = $("#emailId").val();
+            var deviceId = $("#deviceId").val();;
+            var deviceType = $("#deviceType").val();
+            var duration = $("#durationId").val();
+
+            if (valid(email, duration)) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/ConfirmBooking",
+                    data: {
+                        "deviceType": deviceType,
+                        "deviceId": deviceId,
+                        "email": email,
+                        "duration": duration
+                    },
+                    success: function(response) {
+                        $('#modalForm').modal('hide');
+                        location.reload();
+                    },
+                    failure: function(response) {
+                        alert(response);
+                    },
+                    error: function(response) {
+                        alert(response);
+                    }
+                });
+            }
+
+        });
+    });
+
+    function valid(email, duration) {
+        $('#durationValidationMessage').text(null);
+        $('#emailValidationMessage').text(null);
+        if (duration >= 1 && duration <= 5 && email) {
+            return true;
+        } else {
+            if (!duration) {
+                $('#durationValidationMessage').text('Invalid duration');
+            }
+            if (duration<= 0 || duration >5) {
+                $('#durationValidationMessage').text('Duration must be between 1 and 5 days');
+            }
+            if (!email) {
+                $('#emailValidationMessage').text('Invalid email address');
+            }
+            return false;
+        }
+    }
+    //regex not working
+    //function isEmail(email) {
+    //    var regex = /^([a-zA-Z0-9_.+-])+\@@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    //    return regex.test(email);
+    //}
+</script>

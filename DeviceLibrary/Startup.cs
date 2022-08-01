@@ -30,6 +30,7 @@ namespace DeviceLibrary
                 options.UseSqlServer(mySqlConnectionStr));
 
             services.AddScoped<IDeviceRepository, DeviceRepository>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddControllersWithViews();
         }
 
