@@ -10,16 +10,16 @@
         @foreach (var camera in Model.CameraViewModel)
         {
             string availabilityStatus = camera.Available ? "Is Available" : "Not Available";
-            <div class="col-sm">
-                <div>@camera.Name</div>
-                <div>@camera.Model</div>
-                <div>@availabilityStatus</div>
-                <div>@camera.DeviceType</div>
-                @if (@camera.Available)
-                {
-                    <button class="btn btn-outline-success"> Book Now</button>
-                }
-            </div>
+        <div class="col-sm">
+            <div>@camera.Name</div>
+            <div>@camera.Model</div>
+            <div>@availabilityStatus</div>
+            <div>@camera.DeviceType</div>
+            @if (@camera.Available)
+            {
+                @Html.ActionLink("Book Now", "BookCamera", "Home", routeValues: new{ id = camera.Id}, htmlAttributes: new { @class = "btn btn-primary", @role = "button" })
+            }
+        </div>
         }
     </div>
 </div>
@@ -38,7 +38,8 @@
                 <div>@laptop.DeviceType</div>
                 @if (@laptop.Available)
                 {
-                    <button class="btn btn-outline-success"> Book Now</button>
+                    @Html.ActionLink("Book Now", "BookLaptop", "Home", routeValues: new{ id = laptop.Id}, htmlAttributes: new { @class = "btn btn-primary", @role = "button" })
+
                 }
             </div>
         }
