@@ -65,6 +65,7 @@ namespace DeviceLibrary.Controllers
                 }
 
                 await _bookingRepository.Book(booking);
+                //send email here using SendGrid, or I will need to create a separate email account with a different password for privacy
                 return Json("success");
             }
             return Json("error");
